@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vocabulary Practice - 1st Term</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #111827;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --line: #374151;
+      --accent: #3b82f6;
+      --accent-soft: #1e3a8a;
+      --ok: #22c55e;
+      --warn: #f59e0b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 28px 16px 40px;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.6rem, 2.4vw, 2.4rem);
+    }
+    .subtitle {
+      margin: 0 0 22px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.05);
+    }
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    button {
+      border: none;
+      background: var(--accent);
+      color: white;
+      border-radius: 14px;
+      padding: 12px 16px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    button.secondary {
+      background: #374151;
+    }
+    button.ghost {
+      background: #0b1220;
+      color: var(--accent);
+      border: 1px solid #cfe0ff;
+    }
+    button:hover {
+      filter: brightness(.98);
+    }
+    .status {
+      display: none;
+      margin-bottom: 16px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: .95rem;
+      line-height: 1.5;
+    }
+    .status.show { display: block; }
+    .status.info { background: var(--accent-soft); color: var(--accent); }
+    .status.warn { background: #fff7ed; color: var(--warn); }
+
+    .word-box {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      background: #0b1220;
+    }
+    .label {
+      color: var(--muted);
+      font-size: .9rem;
+      margin-bottom: 6px;
+    }
+    .word {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      margin: 0 0 8px;
+      letter-spacing: .3px;
+    }
+    .pos {
+      display: inline-block;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 700;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: .86rem;
+    }
+    .definition {
+      margin-top: 18px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #0b1220;
+      line-height: 1.65;
+      font-size: .98rem;
+      min-height: 96px;
+    }
+    .spanish {
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 16px;
+      background: #0b1220;
+      border: 1px dashed #374151;
+      display: none;
+    }
+    .spanish.show {
+      display: block;
+    }
+    .spanish-title {
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .footer {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: .9rem;
+      line-height: 1.5;
+    }
+    @media (max-width: 640px) {
+      .topbar {
+        flex-direction: column;
+      }
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Vocabulary Practice - 1st Term</h1>
+    
+
+    <div class="card">
+      <div id="status" class="status info"></div>
+
+      <div class="topbar">
+        <button id="newWordBtn">New word</button>
+        <button id="showSpanishBtn" class="secondary">Show Spanish</button>
+        <button id="hideSpanishBtn" class="ghost">Hide Spanish</button>
+      </div>
+
+      <div class="word-box">
+        <div class="label">Word</div>
+        <div id="word" class="word">—</div>
+        <div id="pos" class="pos">—</div>
+      </div>
+
+      <div class="definition">
+        <div class="label">Definition in English</div>
+        <div id="definitionText">Press “New word”.</div>
+      </div>
+
+      <div id="spanishBox" class="spanish">
+        <div class="spanish-title">Versión en español</div>
+        <div id="spanishText">—</div>
+      </div>
+
+      
+    </div>
+  
+    <div style="text-align:center; margin-top:20px; color:#9ca3af; font-size:0.9rem;">
+      By Omar Mogollón - 2026
+    </div>
+
+  </div>
+
+  <script>
+    const WORDS = [{"en": "a few", "es": "unos pocos / unas pocas", "pos": "det"}, {"en": "a little", "es": "un poco", "pos": "det"}, {"en": "a lot", "es": "mucho", "pos": "det/adv"}, {"en": "a lot of / lots of", "es": "muchos / muchas / mucho de", "pos": "det"}, {"en": "advertisement", "es": "anuncio / publicidad", "pos": "n"}, {"en": "ago", "es": "hace", "pos": "adv"}, {"en": "alive", "es": "vivo / viva", "pos": "adj"}, {"en": "already", "es": "ya", "pos": "adv"}, {"en": "at all", "es": "en absoluto / para nada", "pos": "adv"}, {"en": "bake", "es": "hornear", "pos": "v"}, {"en": "baker", "es": "panadero / panadera", "pos": "n"}, {"en": "basket", "es": "canasta / cesta", "pos": "n"}, {"en": "basement", "es": "sótano", "pos": "n"}, {"en": "be careful", "es": "ten cuidado / tenga cuidado", "pos": "exp"}, {"en": "become", "es": "convertirse en / llegar a ser", "pos": "v"}, {"en": "beauty", "es": "belleza", "pos": "n"}, {"en": "behind", "es": "detrás de", "pos": "adv/prep"}, {"en": "blind", "es": "ciego / ciega", "pos": "adj"}, {"en": "blindness", "es": "ceguera", "pos": "n"}, {"en": "body", "es": "cuerpo", "pos": "n"}, {"en": "book", "es": "reservar", "pos": "v"}, {"en": "bookshop", "es": "librería", "pos": "n"}, {"en": "brake", "es": "freno", "pos": "n"}, {"en": "break", "es": "romper / descanso", "pos": "v/n"}, {"en": "building", "es": "edificio", "pos": "n"}, {"en": "butcher", "es": "carnicero / carnicería", "pos": "n"}, {"en": "buy", "es": "comprar", "pos": "v"}, {"en": "called", "es": "llamado / llamada", "pos": "adj/v"}, {"en": "change", "es": "cambiar", "pos": "v"}, {"en": "chemist", "es": "farmacéutico / farmacia", "pos": "n"}, {"en": "children", "es": "niños / niños", "pos": "n"}, {"en": "clothes", "es": "ropa", "pos": "n"}, {"en": "coat", "es": "abrigo", "pos": "n"}, {"en": "collar", "es": "cuello / collar", "pos": "n"}, {"en": "colleagues", "es": "colegas / compañeros de trabajo", "pos": "n"}, {"en": "come", "es": "venir", "pos": "v"}, {"en": "daily", "es": "diario / diariamente", "pos": "adj/adv"}, {"en": "darkness", "es": "oscuridad", "pos": "n"}, {"en": "department store", "es": "gran almacén", "pos": "n"}, {"en": "die", "es": "morir", "pos": "v"}, {"en": "dirty", "es": "sucio / sucia", "pos": "adj"}, {"en": "dish", "es": "plato", "pos": "n"}, {"en": "drug store", "es": "droguería / farmacia", "pos": "n"}, {"en": "during", "es": "durante", "pos": "prep"}, {"en": "early", "es": "temprano / temprano", "pos": "adj/adv"}, {"en": "earth", "es": "tierra", "pos": "n"}, {"en": "eat", "es": "comer", "pos": "v"}, {"en": "electricals", "es": "aparatos eléctricos", "pos": "n"}, {"en": "engine", "es": "motor", "pos": "n"}, {"en": "enjoy", "es": "disfrutar", "pos": "v"}, {"en": "enough", "es": "suficiente / suficientemente", "pos": "det/adv"}, {"en": "even", "es": "incluso / hasta", "pos": "adv"}, {"en": "ever", "es": "alguna vez", "pos": "adv"}, {"en": "everywhere", "es": "en todas partes", "pos": "adv"}, {"en": "fail", "es": "fallar / reprobar", "pos": "v"}, {"en": "familiar", "es": "familiar / conocido", "pos": "adj"}, {"en": "feet", "es": "pies", "pos": "n"}, {"en": "fill", "es": "llenar", "pos": "v"}, {"en": "fix", "es": "arreglar", "pos": "v"}, {"en": "floor", "es": "piso / suelo", "pos": "n"}, {"en": "food", "es": "comida", "pos": "n"}, {"en": "foot", "es": "pie", "pos": "n"}, {"en": "for sure", "es": "seguro / con certeza", "pos": "exp"}, {"en": "furniture", "es": "muebles", "pos": "n"}, {"en": "game", "es": "juego / partido", "pos": "n"}, {"en": "garage", "es": "garaje", "pos": "n"}, {"en": "get", "es": "obtener / llegar / conseguir", "pos": "v"}, {"en": "gift shop", "es": "tienda de regalos", "pos": "n"}, {"en": "gifts", "es": "regalos", "pos": "n"}, {"en": "glad", "es": "contento / contenta", "pos": "adj"}, {"en": "go out", "es": "salir", "pos": "v"}, {"en": "ground", "es": "suelo / tierra", "pos": "n"}, {"en": "half", "es": "mitad", "pos": "n/det"}, {"en": "halls", "es": "pasillos / salones", "pos": "n"}, {"en": "have to", "es": "tener que", "pos": "v"}, {"en": "hear", "es": "oír / escuchar", "pos": "v"}, {"en": "here", "es": "aquí", "pos": "adv"}, {"en": "how about", "es": "qué tal / qué te parece", "pos": "exp"}, {"en": "I'd prefer", "es": "preferiría", "pos": "exp"}, {"en": "I hope so", "es": "espero que sí", "pos": "exp"}, {"en": "I'm afraid", "es": "me temo / lo siento", "pos": "exp"}, {"en": "kinds of", "es": "tipos de", "pos": "exp"}, {"en": "know", "es": "saber / conocer", "pos": "v"}, {"en": "knowledge", "es": "conocimiento", "pos": "n"}, {"en": "land", "es": "tierra / terreno", "pos": "n"}, {"en": "last", "es": "durar / último", "pos": "v/adj"}, {"en": "late", "es": "tarde", "pos": "adj/adv"}, {"en": "leave", "es": "dejar / irse", "pos": "v"}, {"en": "left", "es": "izquierda / izquierdo / dejó", "pos": "adj/adv/v"}, {"en": "left behind", "es": "dejado atrás", "pos": "exp"}, {"en": "leg", "es": "pierna", "pos": "n"}, {"en": "legs", "es": "piernas", "pos": "n"}, {"en": "like", "es": "gustar / como", "pos": "prep/v"}, {"en": "listen", "es": "escuchar", "pos": "v"}, {"en": "madness", "es": "locura", "pos": "n"}, {"en": "mean", "es": "significar / querer decir", "pos": "v"}, {"en": "meal", "es": "comida", "pos": "n"}, {"en": "meat", "es": "carne", "pos": "n"}, {"en": "money", "es": "dinero", "pos": "n"}, {"en": "most of", "es": "la mayor parte de", "pos": "det"}, {"en": "near", "es": "cerca de", "pos": "prep/adj"}, {"en": "neck", "es": "cuello", "pos": "n"}, {"en": "never mind", "es": "no importa", "pos": "exp"}, {"en": "newsagent", "es": "vendedor de periódicos / quiosco", "pos": "n"}, {"en": "no one", "es": "nadie", "pos": "pron"}, {"en": "nobody", "es": "nadie", "pos": "pron"}, {"en": "nobody knows", "es": "nadie sabe", "pos": "exp"}, {"en": "objects", "es": "objetos", "pos": "n"}, {"en": "on foot", "es": "a pie", "pos": "exp"}, {"en": "one of", "es": "uno de", "pos": "det"}, {"en": "pass", "es": "pasar / aprobar", "pos": "v"}, {"en": "pay", "es": "pagar", "pos": "v"}, {"en": "performance", "es": "presentación / actuación / rendimiento", "pos": "n"}, {"en": "piece", "es": "pieza / pedazo", "pos": "n"}, {"en": "play", "es": "obra / jugar", "pos": "n/v"}, {"en": "pleased", "es": "complacido / contento", "pos": "adj"}, {"en": "poor", "es": "pobre", "pos": "adj"}, {"en": "post office", "es": "oficina de correos", "pos": "n"}, {"en": "receipt", "es": "recibo", "pos": "n"}, {"en": "relative", "es": "pariente", "pos": "n"}, {"en": "ride", "es": "montar / conducir / paseo", "pos": "v"}, {"en": "right", "es": "derecho / correcto / derecha", "pos": "adj/adv/n"}, {"en": "road", "es": "carretera / camino", "pos": "n"}, {"en": "roll", "es": "rodar / rollo", "pos": "n/v"}, {"en": "rub", "es": "frotar", "pos": "v"}, {"en": "rule", "es": "regla", "pos": "n"}, {"en": "same", "es": "mismo / misma", "pos": "adj"}, {"en": "say", "es": "decir", "pos": "v"}, {"en": "sell", "es": "vender", "pos": "v"}, {"en": "sharp", "es": "afilado / puntual", "pos": "adj"}, {"en": "shirts", "es": "camisas", "pos": "n"}, {"en": "shoes", "es": "zapatos", "pos": "n"}, {"en": "shop", "es": "tienda / comprar", "pos": "n/v"}, {"en": "size", "es": "talla / tamaño", "pos": "n"}, {"en": "so", "es": "así / tan / entonces", "pos": "adv/conj"}, {"en": "some of", "es": "algunos de", "pos": "det"}, {"en": "star", "es": "estrella", "pos": "n"}, {"en": "steal", "es": "robar", "pos": "v"}, {"en": "still", "es": "todavía / aún", "pos": "adv"}, {"en": "street", "es": "calle", "pos": "n"}, {"en": "subject", "es": "asignatura / tema", "pos": "n"}, {"en": "supermarket", "es": "supermercado", "pos": "n"}, {"en": "sure", "es": "seguro / claro", "pos": "adj/adv"}, {"en": "tell", "es": "decir / contar", "pos": "v"}, {"en": "teeth", "es": "dientes", "pos": "n"}, {"en": "then", "es": "entonces / luego", "pos": "adv"}, {"en": "there", "es": "allí / ahí", "pos": "adv"}, {"en": "thank", "es": "agradecer / dar las gracias", "pos": "v"}, {"en": "thief", "es": "ladrón / ladrona", "pos": "n"}, {"en": "till / until", "es": "hasta", "pos": "prep/conj"}, {"en": "tooth", "es": "diente", "pos": "n"}, {"en": "toys", "es": "juguetes", "pos": "n"}, {"en": "try", "es": "intentar / probar", "pos": "v"}, {"en": "under", "es": "debajo de", "pos": "prep"}, {"en": "used to", "es": "solía", "pos": "v"}, {"en": "wake up", "es": "despertarse", "pos": "v"}, {"en": "want to", "es": "querer", "pos": "v"}, {"en": "while", "es": "mientras / rato", "pos": "conj/n"}, {"en": "who", "es": "quién", "pos": "pron"}, {"en": "why", "es": "por qué", "pos": "adv"}, {"en": "will", "es": "auxiliar de futuro", "pos": "modal v"}, {"en": "would like to", "es": "quisiera / me gustaría", "pos": "modal exp"}, {"en": "wrong", "es": "equivocado / incorrecto", "pos": "adj"}, {"en": "What a pity!", "es": "¡Qué lástima!", "pos": "exp"}];
+
+    const FALLBACK_DEFINITIONS = {
+      "a few": "A small number of people or things.",
+      "a little": "A small amount of something.",
+      "a lot": "A large amount or a large number.",
+      "a lot of / lots of": "A large quantity or number of something.",
+      "at all": "In any way; to any degree.",
+      "be careful": "To act with attention and avoid danger or mistakes.",
+      "department store": "A large shop with many different sections.",
+      "drug store": "A store where medicine and everyday products are sold.",
+      "for sure": "Without doubt; certainly.",
+      "gift shop": "A shop that sells gifts and souvenirs.",
+      "go out": "To leave home or another place for an activity.",
+      "have to": "To need to do something; to be required to do it.",
+      "how about": "Used to make a suggestion or ask for an opinion.",
+      "I'd prefer": "Used to say what someone would choose more willingly.",
+      "I hope so": "Used to say that you want something to happen.",
+      "I'm afraid": "Used to express regret, politeness, or bad news.",
+      "kinds of": "Types or categories of things.",
+      "left behind": "Not taken along; remaining after others have gone.",
+      "most of": "The greater part or majority of something.",
+      "never mind": "Used to say that something is not important.",
+      "nobody knows": "No person knows the answer or information.",
+      "on foot": "Walking, not using a vehicle.",
+      "one of": "A single member from a group.",
+      "post office": "A place where mail and parcels are sent and received.",
+      "used to": "Shows a past habit or past state.",
+      "wake up": "To stop sleeping.",
+      "want to": "To wish or desire to do something.",
+      "would like to": "A polite way to say you want something.",
+      "What a pity!": "An expression of sadness or disappointment."
+    };
+
+    const wordEl = document.getElementById('word');
+    const posEl = document.getElementById('pos');
+    const definitionEl = document.getElementById('definitionText');
+    const spanishBox = document.getElementById('spanishBox');
+    const spanishText = document.getElementById('spanishText');
+    const statusBox = document.getElementById('status');
+
+    const newWordBtn = document.getElementById('newWordBtn');
+    const showSpanishBtn = document.getElementById('showSpanishBtn');
+    const hideSpanishBtn = document.getElementById('hideSpanishBtn');
+
+    let currentWord = null;
+    let lastIndex = -1;
+
+    function setStatus(message, type = 'info', show = true) {
+      statusBox.textContent = message;
+      statusBox.className = `status ${type} ${show ? 'show' : ''}`;
+    }
+
+    function normalizeForApi(term) {
+      let cleaned = term.toLowerCase().trim();
+
+      const replacements = [
+        ['a lot of / lots of', 'lots of'],
+        ['till / until', 'until'],
+        ['used to', 'used to'],
+        ['would like to', 'would like'],
+        ["I'd prefer", 'prefer'],
+        ["I'm afraid", 'afraid'],
+        ['wake up', 'wake'],
+        ['go out', 'go out'],
+        ['be careful', 'careful'],
+        ['for sure', 'sure'],
+        ['left behind', 'behind'],
+        ['nobody knows', 'know'],
+        ['on foot', 'foot'],
+        ['gift shop', 'shop'],
+        ['department store', 'store'],
+        ['post office', 'post office'],
+        ['drug store', 'drugstore'],
+        ['how about', 'how'],
+        ['a few', 'few'],
+        ['a little', 'little'],
+      ];
+
+      for (const [from, to] of replacements) {
+        if (cleaned === from) return to;
+      }
+
+      return cleaned
+        .replace(/→.*$/g, '')
+        .replace(/\(.+?\)/g, '')
+        .replace(/\//g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    let shuffledIndexes = [];
+
+    function reshuffleDeck() {
+      shuffledIndexes = [...Array(WORDS.length).keys()];
+      for (let i = shuffledIndexes.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffledIndexes[i], shuffledIndexes[j]] = [shuffledIndexes[j], shuffledIndexes[i]];
+      }
+    }
+
+    function pickRandomWord() {
+      if (shuffledIndexes.length === 0) {
+        reshuffleDeck();
+      }
+      return shuffledIndexes.pop();
+    }
+
+    async function fetchDefinition(term) {
+      const apiWord = normalizeForApi(term);
+      const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(apiWord)}`;
+
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('No API definition');
+        const data = await res.json();
+        const entry = Array.isArray(data) ? data[0] : null;
+        const meanings = entry?.meanings || [];
+
+        const defs = [];
+        for (const meaning of meanings) {
+          for (const item of (meaning.definitions || [])) {
+            if (item?.definition) defs.push(item.definition.trim());
+            if (defs.length >= 2) break;
+          }
+          if (defs.length >= 2) break;
+        }
+
+        if (defs.length) {
+          return defs.map((d, i) => `${i + 1}. ${d}`).join(' ');
+        }
+        throw new Error('Empty definition');
+      } catch (error) {
+        return FALLBACK_DEFINITIONS[term] || `Simple classroom meaning: ${term}.`;
+      }
+    }
+
+    async function showRandomWord() {
+      spanishBox.classList.remove('show');
+      const item = WORDS[pickRandomWord()];
+      currentWord = item;
+
+      wordEl.textContent = item.en;
+      posEl.textContent = item.pos || '—';
+      spanishText.textContent = item.es || 'Sin traducción disponible.';
+      definitionEl.textContent = 'Loading definition...';
+      setStatus('', 'info', false);
+
+      const definition = await fetchDefinition(item.en);
+      if (currentWord && currentWord.en === item.en) {
+        definitionEl.textContent = definition;
+      }
+    }
+
+    showSpanishBtn.addEventListener('click', () => {
+      if (!currentWord) {
+        setStatus('Select a word first.', 'warn', true);
+        return;
+      }
+      spanishBox.classList.add('show');
+    });
+
+    hideSpanishBtn.addEventListener('click', () => {
+      spanishBox.classList.remove('show');
+    });
+
+    newWordBtn.addEventListener('click', showRandomWord);
+
+    // Primera carga
+    statusBox.className = 'status';
+    showRandomWord();
+  </script>
+</body>
+</html>
